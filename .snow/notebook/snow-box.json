@@ -1,0 +1,27 @@
+{
+  "dist-electron/preload.cjs": [
+    {
+      "id": "notebook-1769611015449_w15e7adtf",
+      "filePath": "dist-electron/preload.cjs",
+      "note": "⚠️ 这是构建生成的文件，不要手动编辑。如果出现语法错误，应该运行 npm run dev 重新构建。源文件在 electron/preload.ts",
+      "createdAt": "2026-01-28T22:36:55.449",
+      "updatedAt": "2026-01-28T22:36:55.449"
+    }
+  ],
+  "electron/main.ts": [
+    {
+      "id": "notebook-1769611190162_0mfjjjap3",
+      "filePath": "electron/main.ts",
+      "note": "⚠️ URL 加载逻辑已修复：使用 app.isPackaged 判断开发/生产模式。开发模式默认连接 localhost:5173（Vite 默认端口）。生产模式加载 dist/index.html。",
+      "createdAt": "2026-01-28T22:39:50.162",
+      "updatedAt": "2026-01-28T22:40:34.568"
+    },
+    {
+      "id": "notebook-1769611140556_exyolnipc",
+      "filePath": "electron/main.ts",
+      "note": "⚠️ 已添加网络服务崩溃修复：disable-features NetworkService 和 disable-http-cache。frame: false 确保自定义标题栏正常工作。sandbox: false 允许 preload 脚本访问必要的 API。",
+      "createdAt": "2026-01-28T22:39:00.556",
+      "updatedAt": "2026-01-28T22:39:00.556"
+    }
+  ]
+}
