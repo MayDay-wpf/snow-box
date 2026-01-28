@@ -1,0 +1,47 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:SnowBox.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:controls="using:SnowBox.Controls.Window"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="SnowBox.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="SnowBox"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaChromeHints="NoChrome"
+        ExtendClientAreaTitleBarHeightHint="40"
+        Background="{DynamicResource SystemChromeMediumColor}">
+
+    <Window.Styles>
+        <Style Selector="Window">
+            <Setter Property="Padding" Value="0"/>
+        </Style>
+        <Style Selector="Window[WindowState=Maximized]">
+            <Setter Property="Padding" Value="10,10,10,10"/>
+        </Style>
+    </Window.Styles>
+
+    <Design.DataContext>
+        <vm:MainWindowViewModel/>
+    </Design.DataContext>
+
+    <Grid x:Name="MainGrid" RowDefinitions="40,*">
+        <!-- Custom Title Bar -->
+        <controls:CustomTitleBar x:Name="TitleBar" 
+                                 Grid.Row="0" 
+                                 Title="SnowBox"
+                                 Margin="10,5,5,5"/>
+
+        <!-- Main Content Area -->
+        <Border Grid.Row="1" Padding="20">
+            <TextBlock Text="{Binding Greeting}" 
+                       HorizontalAlignment="Center" 
+                       VerticalAlignment="Center"
+                       Foreground="{DynamicResource SystemBaseHighColor}"
+                       FontSize="16"/>
+        </Border>
+    </Grid>
+
+</Window>
