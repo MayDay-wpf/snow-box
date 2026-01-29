@@ -20,32 +20,50 @@ public partial class CustomTitleBar : UserControl
         set => SetValue(TitleProperty, value);
     }
 
+    private bool _isMacOS;
+
     public CustomTitleBar()
     {
         InitializeComponent();
         
-        // Bind Title property to TextBlock
+        // Detect platform
+        _isMacOS = RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
+        
+        // Bind Title property to TextBlocks
         this.PropertyChanged += (s, e) =>
         {
             if (e.Property == TitleProperty)
             {
-                var titleTextBlock = this.FindControl<TextBlock>("TitleTextBlock");
-                if (titleTextBlock != null)
-                {
-                    titleTextBlock.Text = Title;
-                }
+                UpdateTitleText();
             }
         };
+    }
+
+    private void UpdateTitleText()
+    {
+        var macTitle = this.FindControl<TextBlock>("MacTitleTextBlock");
+        var winTitle = this.FindControl<TextBlock>("WinTitleTextBlock");
+        
+        if (macTitle != null) macTitle.Text = Title;
+        if (winTitle != null) winTitle.Text = Title;
     }
 
     protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
     {
         base.OnAttachedToVisualTree(e);
         
+        // Setup platform-specific layout
+        SetupPlatformLayout();
+        
         var window = this.FindLogicalAncestorOfType<Avalonia.Controls.Window>();
         if (window != null)
         {
-            SetupWindowControls(window);
+            // Only setup window controls for non-macOS platforms
+            if (!_isMacOS)
+            {
+                SetupWindowControls(window);
+            }
+            
             SetupDraggableTitleBar(window);
             
             // Update maximize icon when window state changes
@@ -60,6 +78,18 @@ public partial class CustomTitleBar : UserControl
             // Initial icon update
             UpdateMaximizeIcon(window);
         }
+    }
+
+    private void SetupPlatformLayout()
+    {
+        var macLayout = this.FindControl<Grid>("MacLayout");
+        var winLayout = this.FindControl<Grid>("WinLayout");
+        
+        if (macLayout != null) macLayout.IsVisible = _isMacOS;
+        if (winLayout != null) winLayout.IsVisible = !_isMacOS;
+        
+        // Initial title text
+        UpdateTitleText();
     }
 
     private void SetupWindowControls(Avalonia.Controls.Window window)
@@ -94,32 +124,37 @@ public partial class CustomTitleBar : UserControl
 
     private void SetupDraggableTitleBar(Avalonia.Controls.Window window)
     {
-        // Find the draggable area (Grid.Column="1" in title bar)
-        var titleBar = this.FindControl<Grid>("TitleBar");
-        if (titleBar != null)
+        // Get the correct draggable area based on platform
+        Border? draggableArea;
+        
+        if (_isMacOS)
         {
-            var draggableArea = titleBar.Children
-                .OfType<Border>()
-                .FirstOrDefault(b => Grid.GetColumn(b) == 1);
-            
-            if (draggableArea != null)
+            // macOS: Use the full-width draggable area
+            draggableArea = this.FindControl<Border>("MacDraggableArea");
+        }
+        else
+        {
+            // Windows/Linux: Use the draggable area in the middle column
+            draggableArea = this.FindControl<Border>("WinDraggableArea");
+        }
+        
+        if (draggableArea != null)
+        {
+            draggableArea.PointerPressed += (s, e) =>
             {
-                draggableArea.PointerPressed += (s, e) =>
+                if (e.GetCurrentPoint(window).Properties.IsLeftButtonPressed)
                 {
-                    if (e.GetCurrentPoint(window).Properties.IsLeftButtonPressed)
-                    {
-                        window.BeginMoveDrag(e);
-                    }
-                };
+                    window.BeginMoveDrag(e);
+                }
+            };
 
-                // Double-click to maximize/restore
-                draggableArea.DoubleTapped += (s, e) =>
-                {
-                    window.WindowState = window.WindowState == WindowState.Maximized 
-                        ? WindowState.Normal 
-                        : WindowState.Maximized;
-                };
-            }
+            // Double-click to maximize/restore
+            draggableArea.DoubleTapped += (s, e) =>
+            {
+                window.WindowState = window.WindowState == WindowState.Maximized 
+                    ? WindowState.Normal 
+                    : WindowState.Maximized;
+            };
         }
     }
 

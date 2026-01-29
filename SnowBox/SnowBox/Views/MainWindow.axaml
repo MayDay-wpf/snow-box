@@ -7,11 +7,15 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="SnowBox.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
-        Icon="/Assets/avalonia-logo.ico"
+        Icon="/Assets/snow.png"
         Title="SnowBox"
         ExtendClientAreaToDecorationsHint="True"
-        ExtendClientAreaChromeHints="NoChrome"
+        ExtendClientAreaChromeHints="SystemChrome"
         ExtendClientAreaTitleBarHeightHint="40"
+        Width="1200"
+        Height="800"
+        MinWidth="1200"
+        MinHeight="800"
         Background="{DynamicResource SystemChromeMediumColor}">
 
     <Window.Styles>

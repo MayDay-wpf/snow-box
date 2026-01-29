@@ -2,112 +2,146 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:controls="using:SnowBox.Controls.Window"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="40"
              x:Class="SnowBox.Controls.Window.CustomTitleBar">
     
-    <Grid x:Name="TitleBar" Background="{DynamicResource SystemChromeMediumColor}" IsHitTestVisible="True">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="Auto"/>
-        </Grid.ColumnDefinitions>
-
-        <!-- App Icon and Title -->
-        <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="12,0,0,0" VerticalAlignment="Center">
-            <Image Source="/Assets/avalonia-logo.ico" Width="20" Height="20" Margin="0,0,8,0"/>
-            <TextBlock x:Name="TitleTextBlock"
+    <Panel x:Name="TitleBar" Background="Transparent" IsHitTestVisible="True">
+        <!-- macOS Layout: Title centered, space reserved for traffic lights on left -->
+        <Grid x:Name="MacLayout" IsVisible="False">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="80"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="80"/>
+            </Grid.ColumnDefinitions>
+            
+            <!-- Left: Empty space for traffic lights -->
+            <Border Grid.Column="0"/>
+            
+            <!-- Center: Title -->
+            <TextBlock Grid.Column="1" 
+                       x:Name="MacTitleTextBlock"
                        Text="SnowBox" 
                        FontSize="13" 
                        FontWeight="Normal"
                        Foreground="{DynamicResource SystemBaseHighColor}"
-                       VerticalAlignment="Center"/>
-        </StackPanel>
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Center"/>
+            
+            <!-- Right: Empty for balance -->
+            <Border Grid.Column="2"/>
+            
+            <!-- Full width draggable area -->
+            <Border Grid.Column="0" Grid.ColumnSpan="3" 
+                    Background="Transparent" 
+                    x:Name="MacDraggableArea"/>
+        </Grid>
+        
+        <!-- Windows/Linux Layout: Icon+Title left, controls right -->
+        <Grid x:Name="WinLayout" IsVisible="False">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
 
-        <!-- Draggable Area -->
-        <Border Grid.Column="1" Background="Transparent" IsHitTestVisible="True"/>
+            <!-- App Icon and Title -->
+            <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="12,0,0,0" VerticalAlignment="Center">
+                <Image Source="/Assets/snow.png" Width="20" Height="20" Margin="0,0,8,0"/>
+                <TextBlock x:Name="WinTitleTextBlock"
+                           Text="SnowBox" 
+                           FontSize="13" 
+                           FontWeight="Normal"
+                           Foreground="{DynamicResource SystemBaseHighColor}"
+                           VerticalAlignment="Center"/>
+            </StackPanel>
 
-        <!-- Window Controls -->
-        <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="0" Margin="0,0,2,0">
-            <!-- Minimize Button -->
-            <Button x:Name="MinimizeButton"
-                    Width="36" Height="30"
-                    Background="Transparent"
-                    BorderThickness="0"
-                    CornerRadius="4"
-                    VerticalAlignment="Center"
-                    HorizontalContentAlignment="Center"
-                    VerticalContentAlignment="Center"
-                    Padding="0"
-                    ClipToBounds="False">
-                <Button.Styles>
-                    <Style Selector="Button:pointerover /template/ ContentPresenter">
-                        <Setter Property="Background" Value="#2A2A2A"/>
-                    </Style>
-                    <Style Selector="Button:pressed /template/ ContentPresenter">
-                        <Setter Property="Background" Value="#333333"/>
-                    </Style>
-                </Button.Styles>
-                <Path Data="M 0,0 L 10,0" 
-                      Stroke="{DynamicResource SystemBaseHighColor}"
-                      StrokeThickness="1"
-                      VerticalAlignment="Center"
-                      HorizontalAlignment="Center"/>
-            </Button>
+            <!-- Draggable Area -->
+            <Border Grid.Column="1" Background="Transparent" x:Name="WinDraggableArea"/>
 
-            <!-- Maximize/Restore Button -->
-            <Button x:Name="MaximizeButton"
-                    Width="36" Height="30"
-                    Background="Transparent"
-                    BorderThickness="0"
-                    CornerRadius="4"
-                    VerticalAlignment="Center"
-                    HorizontalContentAlignment="Center"
-                    VerticalContentAlignment="Center"
-                    Padding="0"
-                    ClipToBounds="False">
-                <Button.Styles>
-                    <Style Selector="Button:pointerover /template/ ContentPresenter">
-                        <Setter Property="Background" Value="#2A2A2A"/>
-                    </Style>
-                    <Style Selector="Button:pressed /template/ ContentPresenter">
-                        <Setter Property="Background" Value="#333333"/>
-                    </Style>
-                </Button.Styles>
-                <Path x:Name="MaximizeIcon"
-                      Data="M 0,0 L 10,0 L 10,10 L 0,10 Z" 
-                      Stroke="{DynamicResource SystemBaseHighColor}"
-                      StrokeThickness="1"
-                      Fill="Transparent"
-                      VerticalAlignment="Center"
-                      HorizontalAlignment="Center"/>
-            </Button>
+            <!-- Window Controls -->
+            <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="0" Margin="0,0,2,0">
+                <!-- Minimize Button -->
+                <Button x:Name="MinimizeButton"
+                        Width="36" Height="30"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        CornerRadius="4"
+                        VerticalAlignment="Center"
+                        HorizontalContentAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        Padding="0"
+                        ClipToBounds="False">
+                    <Button.Styles>
+                        <Style Selector="Button:pointerover /template/ ContentPresenter">
+                            <Setter Property="Background" Value="#2A2A2A"/>
+                        </Style>
+                        <Style Selector="Button:pressed /template/ ContentPresenter">
+                            <Setter Property="Background" Value="#333333"/>
+                        </Style>
+                    </Button.Styles>
+                    <Path Data="M 0,0 L 10,0" 
+                          Stroke="{DynamicResource SystemBaseHighColor}"
+                          StrokeThickness="1"
+                          VerticalAlignment="Center"
+                          HorizontalAlignment="Center"/>
+                </Button>
 
-            <!-- Close Button -->
-            <Button x:Name="CloseButton"
-                    Width="36" Height="30"
-                    Background="Transparent"
-                    BorderThickness="0"
-                    CornerRadius="4"
-                    VerticalAlignment="Center"
-                    HorizontalContentAlignment="Center"
-                    VerticalContentAlignment="Center"
-                    Padding="0"
-                    ClipToBounds="False">
-                <Button.Styles>
-                    <Style Selector="Button:pointerover /template/ ContentPresenter">
-                        <Setter Property="Background" Value="#E81123"/>
-                    </Style>
-                    <Style Selector="Button:pressed /template/ ContentPresenter">
-                        <Setter Property="Background" Value="#F1707A"/>
-                    </Style>
-                </Button.Styles>
-                <Path Data="M 0,0 L 10,10 M 10,0 L 0,10" 
-                      Stroke="{DynamicResource SystemBaseHighColor}"
-                      StrokeThickness="1"
-                      VerticalAlignment="Center"
-                      HorizontalAlignment="Center"/>
-            </Button>
-        </StackPanel>
-    </Grid>
+                <!-- Maximize/Restore Button -->
+                <Button x:Name="MaximizeButton"
+                        Width="36" Height="30"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        CornerRadius="4"
+                        VerticalAlignment="Center"
+                        HorizontalContentAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        Padding="0"
+                        ClipToBounds="False">
+                    <Button.Styles>
+                        <Style Selector="Button:pointerover /template/ ContentPresenter">
+                            <Setter Property="Background" Value="#2A2A2A"/>
+                        </Style>
+                        <Style Selector="Button:pressed /template/ ContentPresenter">
+                            <Setter Property="Background" Value="#333333"/>
+                        </Style>
+                    </Button.Styles>
+                    <Path x:Name="MaximizeIcon"
+                          Data="M 0,0 L 10,0 L 10,10 L 0,10 Z" 
+                          Stroke="{DynamicResource SystemBaseHighColor}"
+                          StrokeThickness="1"
+                          Fill="Transparent"
+                          VerticalAlignment="Center"
+                          HorizontalAlignment="Center"/>
+                </Button>
+
+                <!-- Close Button -->
+                <Button x:Name="CloseButton"
+                        Width="36" Height="30"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        CornerRadius="4"
+                        VerticalAlignment="Center"
+                        HorizontalContentAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        Padding="0"
+                        ClipToBounds="False">
+                    <Button.Styles>
+                        <Style Selector="Button:pointerover /template/ ContentPresenter">
+                            <Setter Property="Background" Value="#E81123"/>
+                        </Style>
+                        <Style Selector="Button:pressed /template/ ContentPresenter">
+                            <Setter Property="Background" Value="#F1707A"/>
+                        </Style>
+                    </Button.Styles>
+                    <Path Data="M 0,0 L 10,10 M 10,0 L 0,10" 
+                          Stroke="{DynamicResource SystemBaseHighColor}"
+                          StrokeThickness="1"
+                          VerticalAlignment="Center"
+                          HorizontalAlignment="Center"/>
+                </Button>
+            </StackPanel>
+        </Grid>
+    </Panel>
     
 </UserControl>
